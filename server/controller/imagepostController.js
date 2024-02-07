@@ -3,24 +3,18 @@ const Image = require('../model/Image'); // Adjust the path based on your projec
 
 const uploadImage = async (req, res) => {
   try {
-    let imageData = {
-      data: fs.readFileSync('./missing.jpeg'), // Read default image
-      contentType: 'image/png',
-    };
+    
+    const imageData = new Image({
+      name:req.body.name,
+      image:{
+        data:req.file.filename,
+        contentType:'image/png'
+      }
+    })
 
-    if (req.file) {
-      imageData = {
-        data: fs.readFileSync(`./uploads/${req.file.filename}`),
-        contentType: req.file.mimetype,
-      };
-    }
-
-    const saveImage = new Image({
-      img: imageData,
-    });
-
-    await saveImage.save();
+    await imageData.save();
     res.status(200).send('IMAGE SAVED');
+
   } catch (err) {
     console.error(err);
     res.status(500).send('Internal Server Error');
